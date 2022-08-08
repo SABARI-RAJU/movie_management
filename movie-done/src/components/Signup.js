@@ -36,7 +36,7 @@ function Signup()
     event.preventDefault();
     console.log(formData);
     // console.log(config);
-    if(true)
+    if(validateInput())
     {
     //   barFun(false)
       try {
@@ -57,37 +57,37 @@ function Signup()
 
   };
 
-//   const validateInput = (data) => {
-//     if (!name.username) {
-//     //   enqueueSnackbar("Username is a required field")
-//       return false;
-//     }
-//     if (name.username.length < 6) {
-//       enqueueSnackbar("Username must be at least 6 characters");
-//       return false;
-//     }
-//     if (name.username.length > 32) {
-//       enqueueSnackbar("Username must be at most 32 characters");
-//       return false;
-//     }
-//     if (!name.password) {
-//       enqueueSnackbar("Password is a required field");
-//       return false;
-//     }
-//     if (name.password.length < 6) {
-//       enqueueSnackbar("Password must be at least 6 characters");
-//       return false;
-//     }
-//     if (name.password.length > 32) {
-//       enqueueSnackbar("Password must be at most 32 characters");
-//       return false;
-//     }
-//     if (name.password !== name.confirmPassword) {
-//       enqueueSnackbar("Passwords do not match");
-//       return false;
-//     }
-//     return true;
-//   };
+  const validateInput = (data) => {
+    if (!name.username) {
+      alert("Username is a required field")
+      return false;
+    }
+    if (name.username.length < 6) {
+      alert("Username must be at least 6 characters");
+      return false;
+    }
+    if (name.username.length > 32) {
+      alert("Username must be at most 32 characters");
+      return false;
+    }
+    if (!name.password) {
+      alert("Password is a required field");
+      return false;
+    }
+    if (name.password.length < 6) {
+      alert("Password must be at least 6 characters");
+      return false;
+    }
+    if (name.password.length > 32) {
+      alert("Password must be at most 32 characters");
+      return false;
+    }
+    if (name.password !== name.confirmPassword) {
+      alert("Passwords do not match");
+      return false;
+    }
+    return true;
+  };
 
 
 
@@ -128,7 +128,6 @@ function Signup()
             label="Password"
             name="password"
             type="password"
-            helperText="Password must be atleast 6 characters length"
             fullWidth
             placeholder="Enter a password with minimum 6 characters"
             onChange={(event)=>inputEvent(event)}
