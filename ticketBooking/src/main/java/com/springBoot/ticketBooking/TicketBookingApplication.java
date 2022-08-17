@@ -14,7 +14,7 @@ public class TicketBookingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TicketBookingApplication.class, args);
 	}
-
+	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return NoOpPasswordEncoder.getInstance();

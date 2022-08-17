@@ -1,6 +1,6 @@
 package com.springBoot.ticketBooking.model;
 
-public class Seat {
+public class ScreenSeat {
 
 	private String seatId;
 	private String SeatNumber;

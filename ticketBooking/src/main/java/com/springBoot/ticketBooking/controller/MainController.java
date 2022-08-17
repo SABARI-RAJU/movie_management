@@ -1,5 +1,6 @@
 package com.springBoot.ticketBooking.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -18,24 +19,46 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springBoot.ticketBooking.jpaRespository.BookingJpaRepository;
+import com.springBoot.ticketBooking.jpaRespository.CinemaHallJpaRepository;
+import com.springBoot.ticketBooking.jpaRespository.CinemaScreenJpaRepository;
 import com.springBoot.ticketBooking.jpaRespository.MovieJpaRepository;
+import com.springBoot.ticketBooking.jpaRespository.ShowJpaRepository;
 import com.springBoot.ticketBooking.jpaRespository.UserJpaRepository;
+import com.springBoot.ticketBooking.model.Booking;
+import com.springBoot.ticketBooking.model.CinemaHall;
+import com.springBoot.ticketBooking.model.FilterResponse;
 import com.springBoot.ticketBooking.model.JwtRequest;
 import com.springBoot.ticketBooking.model.JwtResponse;
 import com.springBoot.ticketBooking.model.Movielist;
+import com.springBoot.ticketBooking.model.ShowFilter;
+import com.springBoot.ticketBooking.model.Shows;
 import com.springBoot.ticketBooking.model.UserModel;
+import com.springBoot.ticketBooking.model.cinemaScreen;
 import com.springBoot.ticketBooking.service.AdminMoviesService;
 import com.springBoot.ticketBooking.service.UserService;
 import com.springBoot.ticketBooking.utility.JWTUtility;
 
 @RestController
 @CrossOrigin(origins={"http://localhost:3000"})
-public class demo {
+public class MainController {
 	@Autowired
 	private UserJpaRepository userJpaRepository;
 	
 	@Autowired
+	private BookingJpaRepository bookingJpaRepository;
+	
+	@Autowired
 	private MovieJpaRepository movieJpaRepository;
+	
+	@Autowired
+	private CinemaHallJpaRepository cinemaHallJpaRepository;
+	
+	@Autowired
+	private ShowJpaRepository showJpaRepository;
+	
+	@Autowired
+	private CinemaScreenJpaRepository cinemaScreenJpaRepository;
 
 	@Autowired
 	private JWTUtility jwtUtility;
@@ -52,12 +75,8 @@ public class demo {
 	@PostMapping(value = "/addMovies")
 	public void addMovies(HttpServletRequest req, HttpServletResponse res,@RequestBody Movielist movies) {
 
-//		HttpSession session = req.getSession();
-//		System.out.println("hiiiii");
-//		System.out.println(session.getAttribute("token"));
-//		return "Admin   " + session.getAttribute("token");
 		Random random = new Random();
-		movies.setMovieid("#"+movies.getMoviename().substring(0,3)+random.nextInt(100,900));
+		movies.setMovieid("#"+movies.getTitle().substring(0,3)+random.nextInt(100,900));
 		adminMoviesService.addmoviesService(movies);
 		
 	}
@@ -68,16 +87,58 @@ public class demo {
 		
 	}
 	
-	@GetMapping(value = "/main")
+	@PostMapping(value = "/registerMovies")
+	public void registerMovies(HttpServletRequest req, HttpServletResponse res,@RequestBody Booking register)
+	{
+		System.out.println(register.getSeatno());
+//		List<String> l=new ArrayList<String>();
+//		l.add("a3");
+//		register.setSeatno(l);
+//		System.out.println(register.getSeatno());
+		bookingJpaRepository.save(register);
+		
+		
+	}
+	
+	@PostMapping(value = "/addHall")
+	public void adminTheatreAdd(HttpServletRequest req, HttpServletResponse res,@RequestBody CinemaHall hall)
+	{
+		System.out.println(hall.getScreen());
+		cinemaHallJpaRepository.save(hall);
+		
+		
+	}
+	
+	@PostMapping(value = "/addScreen")
+	public void adminTheatreAdd(HttpServletRequest req, HttpServletResponse res,@RequestBody cinemaScreen screen)
+	{
+		System.out.println(screen.getHall().getCinemaHallId());
+
+		cinemaScreenJpaRepository.save(screen);
+		
+		
+	}
+	@PostMapping(value = "/createShow")
+	public void adminCreateShow(HttpServletRequest req, HttpServletResponse res,@RequestBody Shows show)
+	{
+		System.out.println(show.toString());
+		showJpaRepository.save(show);
+		
+		
+	}
+	
+	@PostMapping(value = "/showFilter")
+	public List<FilterResponse> adminCreateShow(HttpServletRequest req, HttpServletResponse res,@RequestBody ShowFilter filter)
+	{
+		return showJpaRepository.findmovies(filter.getShowtype(),filter.getShowdate(),filter.getMovietype(),filter.getScreenid(),filter.getName(),filter.getCity());
+		
+		
+	}
+	
+	@GetMapping(value = "/movieList")
 	public List<Movielist> getmovies(HttpServletRequest req, HttpServletResponse res) {
 		
 		return movieJpaRepository.findAll();
-	}
-
-	@GetMapping(value = "/user")
-	public String getuser() {
-
-		return "user";
 	}
 
 	@PostMapping(value = "/signUp")

@@ -23,19 +23,19 @@ public class AdminMoviesService {
 	public void updatemoviesService(Movielist movies)
 	{
 		
-		System.out.println(movies.getMovieid());
-		Movielist movieDetail=movieJpaRepository.findByMoviename(movies.getMoviename());
-		System.out.println(movieDetail.getMovietype());
-		if(movies.getMovietype()!=null)
-		{
-			movieDetail.setMovietype(movies.getMovietype());
-		}
-		if(movies.getMovieurl()!=null)
-		{
-			movieDetail.setMovieurl(movies.getMovieurl());
-		}
-		
-		movieJpaRepository.save(movieDetail);
+//		System.out.println(movies.getMovieid());
+//		Movielist movieDetail=movieJpaRepository.findByMoviename(movies.getTitle());
+//		System.out.println(movieDetail.getMovietype());
+//		if(movies.getMovietype()!=null)
+//		{
+//			movieDetail.setMovietype(movies.getMovietype());
+//		}
+//		if(movies.getMovieurl()!=null)
+//		{
+//			movieDetail.setMovieurl(movies.getMovieurl());
+//		}
+//		
+//		movieJpaRepository.save(movieDetail);
 		
 	}
 	

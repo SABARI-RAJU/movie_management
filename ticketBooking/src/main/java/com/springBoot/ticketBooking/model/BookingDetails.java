@@ -8,7 +8,7 @@ public class BookingDetails {
 	private String bookingId;
 	private String movieId;
 	private float price;
-	private List<Seat> seat;
+	private List<ScreenSeat> seat;
 	public String getDeatailId() {
 		return deatailId;
 	}
@@ -33,10 +33,10 @@ public class BookingDetails {
 	public void setPrice(float price) {
 		this.price = price;
 	}
-	public List<Seat> getSeat() {
+	public List<ScreenSeat> getSeat() {
 		return seat;
 	}
-	public void setSeat(List<Seat> seat) {
+	public void setSeat(List<ScreenSeat> seat) {
 		this.seat = seat;
 	}
 	

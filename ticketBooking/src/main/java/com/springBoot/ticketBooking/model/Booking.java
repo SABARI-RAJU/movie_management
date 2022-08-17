@@ -2,21 +2,53 @@ package com.springBoot.ticketBooking.model;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.HashSet;
 import java.util.List;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="booking")
 public class Booking {
 	
-	public String getBookingId() {
-		return bookingId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long bookingid;
+	private int numberofseat;				
+	private Date date;
+	private String showtime;
+	private String useremail;
+	private String moviename;
+	
+	@ElementCollection
+	private List<String> seatno;
+	 
+	public List<String> getSeatno() {
+		return seatno;
 	}
-	public void setBookingId(String bookingId) {
-		this.bookingId = bookingId;
+	public void setSeatno(List<String> seatno) {
+		this.seatno = seatno;
 	}
-	public int getNumberOfSeat() {
-		return numberOfSeat;
+	private String cinemahallname;
+	
+	
+	public long getBookingid() {
+		return bookingid;
 	}
-	public void setNumberOfSeat(int numberOfSeat) {
-		this.numberOfSeat = numberOfSeat;
+	
+	public void setBookingid(long bookingid) {
+		this.bookingid = bookingid;
+	}
+	public int getNumberofseat() {
+		return numberofseat;
+	}
+	public void setNumberofseat(int numberofseat) {
+		this.numberofseat = numberofseat;
 	}
 	public Date getDate() {
 		return date;
@@ -24,37 +56,51 @@ public class Booking {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	public Time getTime() {
-		return time;
+	public String getShowtime() {
+		return showtime;
 	}
-	public void setTime(Time time) {
-		this.time = time;
+	public void setShowtime(String showtime) {
+		this.showtime = showtime;
 	}
-	public String getUserEmail() {
-		return userEmail;
+	public String getUseremail() {
+		return useremail;
 	}
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
+	public void setUseremail(String useremail) {
+		this.useremail = useremail;
 	}
-	public List<Movielist> getMovies() {
-		return movies;
+	public String getMoviename() {
+		return moviename;
 	}
-	public void setMovies(List<Movielist> movies) {
-		this.movies = movies;
+	public void setMoviename(String moviename) {
+		this.moviename = moviename;
 	}
-	public String getCinemaHallId() {
-		return cinemaHallId;
+	
+	public String getCinemahallname() {
+		return cinemahallname;
 	}
-	public void setCinemaHallId(String cinemaHallId) {
-		this.cinemaHallId = cinemaHallId;
+	public void setCinemahallname(String cinemahallname) {
+		this.cinemahallname = cinemahallname;
 	}
-	private String bookingId;
-	private int numberOfSeat;				
-	private Date date;
-	private Time time;
-	private String userEmail;
-	private List<Movielist> movies;
-	private String cinemaHallId;
+	public Booking() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Booking(int bookingid, int numberofseat, Date date, String showtime, String useremail, String moviename,
+			List<String> seatno, String cinemahallname) {
+		super();
+		this.bookingid = bookingid;
+		this.numberofseat = numberofseat;
+		this.date = date;
+		this.showtime = showtime;
+		this.useremail = useremail;
+		this.moviename = moviename;
+		this.seatno = seatno;
+		this.cinemahallname = cinemahallname;
+	}
+	
+	
+	
 	
 	
 	
