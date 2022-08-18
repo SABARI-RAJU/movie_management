@@ -10,38 +10,45 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="booking")
 public class Booking {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long bookingid;
-	private int numberofseat;				
-	private Date date;
-	private String showtime;
-	private String useremail;
-	private String moviename;
-	
+	private String bookingid;
+	private int numberofseat;
 	@ElementCollection
 	private List<String> seatno;
-	 
-	public List<String> getSeatno() {
-		return seatno;
-	}
-	public void setSeatno(List<String> seatno) {
+	private Date date;
+	private String showtime;
+	@ManyToOne
+	@JoinColumn(name = "userid")
+	private UserModel user;
+	@ManyToOne
+	@JoinColumn(name = "showId")
+	private Shows show;
+	public Booking(String bookingid, int numberofseat, List<String> seatno, Date date, String showtime, UserModel user,
+			Shows show) {
+		super();
+		this.bookingid = bookingid;
+		this.numberofseat = numberofseat;
 		this.seatno = seatno;
+		this.date = date;
+		this.showtime = showtime;
+		this.user = user;
+		this.show = show;
 	}
-	private String cinemahallname;
-	
-	
-	public long getBookingid() {
+	public Booking() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public String getBookingid() {
 		return bookingid;
 	}
-	
-	public void setBookingid(long bookingid) {
+	public void setBookingid(String bookingid) {
 		this.bookingid = bookingid;
 	}
 	public int getNumberofseat() {
@@ -49,6 +56,12 @@ public class Booking {
 	}
 	public void setNumberofseat(int numberofseat) {
 		this.numberofseat = numberofseat;
+	}
+	public List<String> getSeatno() {
+		return seatno;
+	}
+	public void setSeatno(List<String> seatno) {
+		this.seatno = seatno;
 	}
 	public Date getDate() {
 		return date;
@@ -62,42 +75,29 @@ public class Booking {
 	public void setShowtime(String showtime) {
 		this.showtime = showtime;
 	}
-	public String getUseremail() {
-		return useremail;
+	public UserModel getUser() {
+		return user;
 	}
-	public void setUseremail(String useremail) {
-		this.useremail = useremail;
+	public void setUser(UserModel user) {
+		this.user = user;
 	}
-	public String getMoviename() {
-		return moviename;
+	public Shows getShow() {
+		return show;
 	}
-	public void setMoviename(String moviename) {
-		this.moviename = moviename;
+	public void setShow(Shows show) {
+		this.show = show;
+	}
+	@Override
+	public String toString() {
+		return "Booking [bookingid=" + bookingid + ", numberofseat=" + numberofseat + ", seatno=" + seatno + ", date="
+				+ date + ", showtime=" + showtime + ", user=" + user + ", show=" + show + "]";
 	}
 	
-	public String getCinemahallname() {
-		return cinemahallname;
-	}
-	public void setCinemahallname(String cinemahallname) {
-		this.cinemahallname = cinemahallname;
-	}
-	public Booking() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public Booking(int bookingid, int numberofseat, Date date, String showtime, String useremail, String moviename,
-			List<String> seatno, String cinemahallname) {
-		super();
-		this.bookingid = bookingid;
-		this.numberofseat = numberofseat;
-		this.date = date;
-		this.showtime = showtime;
-		this.useremail = useremail;
-		this.moviename = moviename;
-		this.seatno = seatno;
-		this.cinemahallname = cinemahallname;
-	}
+	
+	
+	
+	
+	
 	
 	
 	

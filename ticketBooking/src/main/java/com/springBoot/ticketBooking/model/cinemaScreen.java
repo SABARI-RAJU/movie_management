@@ -3,6 +3,7 @@ package com.springBoot.ticketBooking.model;
 import java.sql.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -20,8 +21,8 @@ public class cinemaScreen {
 	@ManyToOne
 	@JoinColumn(name = "cinemaHallId")
 	private CinemaHall hall;
-	@OneToOne(mappedBy = "screen")
-	private Shows show;
+//	@OneToOne(mappedBy = "screen",fetch = FetchType.LAZY)
+//	private Shows show;
 public cinemaScreen() {
 		super();
 		// TODO Auto-generated constructor stub

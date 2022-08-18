@@ -23,6 +23,7 @@ import com.springBoot.ticketBooking.jpaRespository.BookingJpaRepository;
 import com.springBoot.ticketBooking.jpaRespository.CinemaHallJpaRepository;
 import com.springBoot.ticketBooking.jpaRespository.CinemaScreenJpaRepository;
 import com.springBoot.ticketBooking.jpaRespository.MovieJpaRepository;
+import com.springBoot.ticketBooking.jpaRespository.SeatJpaRepository;
 import com.springBoot.ticketBooking.jpaRespository.ShowJpaRepository;
 import com.springBoot.ticketBooking.jpaRespository.UserJpaRepository;
 import com.springBoot.ticketBooking.model.Booking;
@@ -31,6 +32,7 @@ import com.springBoot.ticketBooking.model.FilterResponse;
 import com.springBoot.ticketBooking.model.JwtRequest;
 import com.springBoot.ticketBooking.model.JwtResponse;
 import com.springBoot.ticketBooking.model.Movielist;
+import com.springBoot.ticketBooking.model.ScreenSeat;
 import com.springBoot.ticketBooking.model.ShowFilter;
 import com.springBoot.ticketBooking.model.Shows;
 import com.springBoot.ticketBooking.model.UserModel;
@@ -59,6 +61,9 @@ public class MainController {
 	
 	@Autowired
 	private CinemaScreenJpaRepository cinemaScreenJpaRepository;
+	
+	@Autowired
+	private SeatJpaRepository seatJpaRepository;
 
 	@Autowired
 	private JWTUtility jwtUtility;
@@ -90,11 +95,9 @@ public class MainController {
 	@PostMapping(value = "/registerMovies")
 	public void registerMovies(HttpServletRequest req, HttpServletResponse res,@RequestBody Booking register)
 	{
-		System.out.println(register.getSeatno());
-//		List<String> l=new ArrayList<String>();
-//		l.add("a3");
-//		register.setSeatno(l);
-//		System.out.println(register.getSeatno());
+		register.setBookingid(register.getShow().getShowId()+""+register.getUser().getUserid());
+		System.out.println(register.toString());
+		bookingJpaRepository.bookseat(register.getShow().getShowId(),register.getSeatno());
 		bookingJpaRepository.save(register);
 		
 		
@@ -121,11 +124,35 @@ public class MainController {
 	@PostMapping(value = "/createShow")
 	public void adminCreateShow(HttpServletRequest req, HttpServletResponse res,@RequestBody Shows show)
 	{
-		System.out.println(show.toString());
+		System.out.println(show.getScreen().getScreenid().toString());
+		ScreenSeat seat=new ScreenSeat();
+		int row=cinemaScreenJpaRepository.findByscreenid(show.getScreen().getScreenid()).getRowdetails();
+		int column=cinemaScreenJpaRepository.findByscreenid(show.getScreen().getScreenid()).getRowdetails();
+		System.out.println(row);
+		char[] alphabet = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
+		for(int i=0;i<row;i++)
+		{
+			for(int j=1;j<=column;j++)
+			{
+				seat.setSeatId(show.getShowId()+""+alphabet[i]+""+j);
+				seat.setSeatNumber(alphabet[i]+""+j);
+				seat.setStatus(false);
+				seat.setReserved(false);
+				seat.setPrice(show.getPrice());
+				seat.setScreenid(show.getScreen().getScreenid());
+				seat.setShowDate(show.getShowDate());
+				seat.setShowid(show.getShowId());
+				seatJpaRepository.save(seat);
+				
+			}
+			
+		}
 		showJpaRepository.save(show);
 		
 		
 	}
+	
+	
 	
 	@PostMapping(value = "/showFilter")
 	public List<FilterResponse> adminCreateShow(HttpServletRequest req, HttpServletResponse res,@RequestBody ShowFilter filter)
@@ -145,6 +172,7 @@ public class MainController {
 	public void load(@RequestBody UserModel user) {
 		try {
 			System.out.println(user.getUsername());
+			user.setUserid(user.getEmail()+""+user.getUsername());
 			userJpaRepository.save(user);
 			System.out.println("records inserted into database");
 		} catch (Exception e) {

@@ -1,9 +1,11 @@
 package com.springBoot.ticketBooking.model;
 
+import java.sql.Date;
+
 public class ShowFilter {
 	
 	private String showtype;
-	private String showdate;
+	private Date showdate;
 	private String movietype;
 	private String screenid;
 	private String name;
@@ -14,10 +16,10 @@ public class ShowFilter {
 	public void setShowtype(String showtype) {
 		this.showtype = showtype;
 	}
-	public String getShowdate() {
+	public Date getShowdate() {
 		return showdate;
 	}
-	public void setShowdate(String showdate) {
+	public void setShowdate(Date showdate) {
 		this.showdate = showdate;
 	}
 	public String getMovietype() {
@@ -44,7 +46,7 @@ public class ShowFilter {
 	public void setCity(String city) {
 		this.city = city;
 	}
-	public ShowFilter(String showtype, String showdate, String movietype, String screenid, String name, String city) {
+	public ShowFilter(String showtype, Date showdate, String movietype, String screenid, String name, String city) {
 		super();
 		this.showtype = showtype;
 		this.showdate = showdate;
