@@ -19,6 +19,7 @@ public class ScreenSeat {
 	private String screenid;
 	private Date showDate;
 	private String showid;
+	private String bookingid;
 	
 	public String getScreenid() {
 		return screenid;
@@ -33,8 +34,9 @@ public class ScreenSeat {
 	public void setShowid(String showid) {
 		this.showid = showid;
 	}
+	
 	public ScreenSeat(String seatId, String seatNumber, boolean status, boolean reserved, int price, String screenid,
-			Date showDate, String showid) {
+			Date showDate, String showid, String bookingid) {
 		super();
 		this.seatId = seatId;
 		SeatNumber = seatNumber;
@@ -44,6 +46,14 @@ public class ScreenSeat {
 		this.screenid = screenid;
 		this.showDate = showDate;
 		this.showid = showid;
+		this.bookingid = bookingid;
+	}
+	
+	public String getBookingid() {
+		return bookingid;
+	}
+	public void setBookingid(String bookingid) {
+		this.bookingid = bookingid;
 	}
 	public ScreenSeat() {
 		super();

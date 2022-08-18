@@ -30,8 +30,10 @@ public class Booking {
 	@ManyToOne
 	@JoinColumn(name = "showId")
 	private Shows show;
+	private boolean cancelstatus;
+	
 	public Booking(String bookingid, int numberofseat, List<String> seatno, Date date, String showtime, UserModel user,
-			Shows show) {
+			Shows show, boolean cancelstatus) {
 		super();
 		this.bookingid = bookingid;
 		this.numberofseat = numberofseat;
@@ -40,7 +42,20 @@ public class Booking {
 		this.showtime = showtime;
 		this.user = user;
 		this.show = show;
+		this.cancelstatus = cancelstatus;
 	}
+	
+	
+	public boolean isCancelstatus() {
+		return cancelstatus;
+	}
+
+
+	public void setCancelstatus(boolean cancelstatus) {
+		this.cancelstatus = cancelstatus;
+	}
+
+
 	public Booking() {
 		super();
 		// TODO Auto-generated constructor stub

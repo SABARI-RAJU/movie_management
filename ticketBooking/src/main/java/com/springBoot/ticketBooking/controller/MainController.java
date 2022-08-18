@@ -95,10 +95,11 @@ public class MainController {
 	@PostMapping(value = "/registerMovies")
 	public void registerMovies(HttpServletRequest req, HttpServletResponse res,@RequestBody Booking register)
 	{
-		register.setBookingid(register.getShow().getShowId()+""+register.getUser().getUserid());
+		Random random = new Random();
+		register.setBookingid(register.getShow().getShowId()+""+register.getUser().getUserid()+""+random.nextInt(100,900));
 		System.out.println(register.toString());
-		bookingJpaRepository.bookseat(register.getShow().getShowId(),register.getSeatno());
 		bookingJpaRepository.save(register);
+		bookingJpaRepository.bookseat(register.getShow().getShowId(),register.getSeatno(),register.getBookingid());
 		
 		
 	}
@@ -120,7 +121,7 @@ public class MainController {
 		cinemaScreenJpaRepository.save(screen);
 		
 		
-	}
+	}   
 	@PostMapping(value = "/createShow")
 	public void adminCreateShow(HttpServletRequest req, HttpServletResponse res,@RequestBody Shows show)
 	{
@@ -147,9 +148,16 @@ public class MainController {
 			}
 			
 		}
-		showJpaRepository.save(show);
+//		showJpaRepository.save(show);
 		
 		
+	}
+	
+	@PostMapping(value = "/cancelTicket")
+	public void cancelTicket(HttpServletRequest req, HttpServletResponse res,@RequestBody Booking book)
+	{
+		bookingJpaRepository.cancelTicket(book.getBookingid());
+		bookingJpaRepository.updateBookingStatus(book.getBookingid());
 	}
 	
 	
