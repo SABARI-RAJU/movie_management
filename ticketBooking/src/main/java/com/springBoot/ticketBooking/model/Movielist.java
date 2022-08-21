@@ -19,8 +19,8 @@ public class Movielist {
 	private String movieduration;
 	private String releaseddate;
 	
-	@OneToOne(mappedBy = "screen")
-	private Shows show;
+//	@OneToOne(mappedBy = "screen")
+//	private Shows show;
 
 	public String getMovieid() {
 		return movieid;
@@ -78,13 +78,7 @@ public class Movielist {
 		this.releaseddate = releaseddate;
 	}
 
-	public Shows getShow() {
-		return show;
-	}
-
-	public void setShow(Shows show) {
-		this.show = show;
-	}
+	
 
 	public Movielist() {
 		super();
@@ -92,7 +86,7 @@ public class Movielist {
 	}
 
 	public Movielist(String movieid, String title, String movieurl, String moviedescription, String movietype,
-			String movieduration, String releaseddate, Shows show) {
+			String movieduration, String releaseddate) {
 		super();
 		this.movieid = movieid;
 		this.title = title;
@@ -101,7 +95,6 @@ public class Movielist {
 		this.movietype = movietype;
 		this.movieduration = movieduration;
 		this.releaseddate = releaseddate;
-		this.show = show;
 	}
 	
 	

@@ -8,7 +8,7 @@ import com.springBoot.ticketBooking.model.UserModel;
 
 @Component
 public interface MovieJpaRepository extends JpaRepository<Movielist,String> {
-//	Movielist findByMoviename(String title);
+	Movielist findByTitle(String title);
 	
 
 }

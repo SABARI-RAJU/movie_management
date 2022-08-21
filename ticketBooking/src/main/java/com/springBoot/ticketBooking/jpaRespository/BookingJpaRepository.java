@@ -33,6 +33,17 @@ public interface BookingJpaRepository extends JpaRepository<Booking,Long> {
 	,nativeQuery = true)
 	void updateBookingStatus(String bookingid);
 	
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE screen_seat SET reserved = 1 WHERE showid = ?1 and seat_number in ?2"
+	,nativeQuery = true)
+	void reserveSeat(String showid,List<String> seatno);
+	
+	
+	@Query(value = "select reserved from screen_seat where showid = ?1 and seat_number in ?2"
+	,nativeQuery = true)
+	List<Object> checkIsReserved(String showid,List<String> seatno);
+	
 	
 	
 

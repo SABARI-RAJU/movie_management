@@ -1,6 +1,8 @@
 package com.springBoot.ticketBooking.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -53,8 +55,8 @@ public class MainController {
 	@Autowired
 	private MovieJpaRepository movieJpaRepository;
 	
-	@Autowired
-	private CinemaHallJpaRepository cinemaHallJpaRepository;
+//	@Autowired
+//	private CinemaHallJpaRepository cinemaHallJpaRepository;
 	
 	@Autowired
 	private ShowJpaRepository showJpaRepository;
@@ -74,90 +76,36 @@ public class MainController {
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
-	private AdminMoviesService adminMoviesService;
-
-	@PostMapping(value = "/addMovies")
-	public void addMovies(HttpServletRequest req, HttpServletResponse res,@RequestBody Movielist movies) {
-
-		Random random = new Random();
-		movies.setMovieid("#"+movies.getTitle().substring(0,3)+random.nextInt(100,900));
-		adminMoviesService.addmoviesService(movies);
-		
-	}
-	@PostMapping(value = "/updateMovies")
-	public void updateMovies(HttpServletRequest req, HttpServletResponse res,@RequestBody Movielist movies) {
-		System.out.println("update movies");
-		adminMoviesService.updatemoviesService(movies);
-		
-	}
 	
 	@PostMapping(value = "/registerMovies")
-	public void registerMovies(HttpServletRequest req, HttpServletResponse res,@RequestBody Booking register)
+	public String registerMovies(HttpServletRequest req, HttpServletResponse res,@RequestBody Booking register)
 	{
 		Random random = new Random();
-		register.setBookingid(register.getShow().getShowId()+""+register.getUser().getUserid()+""+random.nextInt(100,900));
-		System.out.println(register.toString());
-		bookingJpaRepository.save(register);
-		bookingJpaRepository.bookseat(register.getShow().getShowId(),register.getSeatno(),register.getBookingid());
-		
-		
-	}
-	
-	@PostMapping(value = "/addHall")
-	public void adminTheatreAdd(HttpServletRequest req, HttpServletResponse res,@RequestBody CinemaHall hall)
-	{
-		System.out.println(hall.getScreen());
-		cinemaHallJpaRepository.save(hall);
-		
-		
-	}
-	
-	@PostMapping(value = "/addScreen")
-	public void adminTheatreAdd(HttpServletRequest req, HttpServletResponse res,@RequestBody cinemaScreen screen)
-	{
-		System.out.println(screen.getHall().getCinemaHallId());
-
-		cinemaScreenJpaRepository.save(screen);
-		
-		
-	}   
-	@PostMapping(value = "/createShow")
-	public void adminCreateShow(HttpServletRequest req, HttpServletResponse res,@RequestBody Shows show)
-	{
-		System.out.println(show.getScreen().getScreenid().toString());
-		ScreenSeat seat=new ScreenSeat();
-		int row=cinemaScreenJpaRepository.findByscreenid(show.getScreen().getScreenid()).getRowdetails();
-		int column=cinemaScreenJpaRepository.findByscreenid(show.getScreen().getScreenid()).getRowdetails();
-		System.out.println(row);
-		char[] alphabet = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
-		for(int i=0;i<row;i++)
+		List<Object> checkReserved=bookingJpaRepository.checkIsReserved(register.getShow().getShowId(),register.getSeatno());
+		if(checkReserved.contains(true))
 		{
-			for(int j=1;j<=column;j++)
-			{
-				seat.setSeatId(show.getShowId()+""+alphabet[i]+""+j);
-				seat.setSeatNumber(alphabet[i]+""+j);
-				seat.setStatus(false);
-				seat.setReserved(false);
-				seat.setPrice(show.getPrice());
-				seat.setScreenid(show.getScreen().getScreenid());
-				seat.setShowDate(show.getShowDate());
-				seat.setShowid(show.getShowId());
-				seatJpaRepository.save(seat);
-				
-			}
-			
+			return "Already reserved....... Choose another seats";
 		}
-//		showJpaRepository.save(show);
-		
+		else
+		{
+			register.setBookingid(register.getShow().getShowId()+""+register.getUser().getUserid()+""+random.nextInt(100,900));
+			System.out.println(register.toString());
+			bookingJpaRepository.save(register);
+			bookingJpaRepository.bookseat(register.getShow().getShowId(),register.getSeatno(),register.getBookingid());
+			
+			return "Seats booked Successfully!!!!!!!!";
+		}		
 		
 	}
+	
 	
 	@PostMapping(value = "/cancelTicket")
-	public void cancelTicket(HttpServletRequest req, HttpServletResponse res,@RequestBody Booking book)
+	public String cancelTicket(HttpServletRequest req, HttpServletResponse res,@RequestBody Booking book)
 	{
 		bookingJpaRepository.cancelTicket(book.getBookingid());
 		bookingJpaRepository.updateBookingStatus(book.getBookingid());
+		
+		return "Cancelled Seat Sucessfully.....";
 	}
 	
 	
@@ -170,21 +118,26 @@ public class MainController {
 		
 	}
 	
-	@GetMapping(value = "/movieList")
+	@GetMapping(value = "/allMovies")
 	public List<Movielist> getmovies(HttpServletRequest req, HttpServletResponse res) {
 		
 		return movieJpaRepository.findAll();
 	}
 
 	@PostMapping(value = "/signUp")
-	public void load(@RequestBody UserModel user) {
+	public String load(@RequestBody UserModel user) {
 		try {
 			System.out.println(user.getUsername());
+			SimpleDateFormat dnt = new SimpleDateFormat("yy/MM/dd");
+	        Date date = new Date();
+	        user.setCreateddate(dnt.format(date).toString());
 			user.setUserid(user.getEmail()+""+user.getUsername());
 			userJpaRepository.save(user);
 			System.out.println("records inserted into database");
+			return "Registered Susscessfully";
 		} catch (Exception e) {
 			System.out.println(e);
+			return "Error in registering...";
 		}
 
 	}
@@ -194,7 +147,6 @@ public class MainController {
 			throws Exception {
 
 		try {
-			System.out.println("kd billa");
 			authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(jwtRequest.getUseremail(), jwtRequest.getPassword()));
 			
