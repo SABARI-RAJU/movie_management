@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -45,6 +46,7 @@ import com.springBoot.ticketBooking.model.Shows;
 import com.springBoot.ticketBooking.model.UserModel;
 import com.springBoot.ticketBooking.model.cinemaScreen;
 import com.springBoot.ticketBooking.service.AdminMoviesService;
+import com.springBoot.ticketBooking.service.BookingService;
 import com.springBoot.ticketBooking.service.UserService;
 import com.springBoot.ticketBooking.utility.JWTUtility;
 
@@ -53,26 +55,20 @@ import io.swagger.models.Response;
 @RestController
 @CrossOrigin(origins={"http://localhost:3000"})
 public class MainController {
+	
+	@Autowired
+	private AdminMoviesService adminMoviesService;
+	
+	@Autowired
+	private BookingService bookingService;
+
+
 	@Autowired
 	private UserJpaRepository userJpaRepository;
 	
 	@Autowired
 	private BookingJpaRepository bookingJpaRepository;
-	
-	@Autowired
-	private MovieJpaRepository movieJpaRepository;
-	
-//	@Autowired
-//	private CinemaHallJpaRepository cinemaHallJpaRepository;
-	
-	@Autowired
-	private ShowJpaRepository showJpaRepository;
-	
-	@Autowired
-	private CinemaScreenJpaRepository cinemaScreenJpaRepository;
-	
-	@Autowired
-	private SeatJpaRepository seatJpaRepository;
+
 
 	@Autowired
 	private JWTUtility jwtUtility;
@@ -89,29 +85,7 @@ public class MainController {
 	@PostMapping(value = "/registerMovies")
 	public String registerMovies(HttpServletRequest req, HttpServletResponse res,@RequestBody Booking register)
 	{
-		try
-		{
-			Random random = new Random();
-			List<Object> checkReserved=bookingJpaRepository.checkIsReserved(register.getShow().getShowId(),register.getSeatno());
-			if(checkReserved.contains(true))
-			{
-				return "Already reserved....... Choose another seats";
-			}
-			else
-			{
-				register.setBookingid(register.getShow().getShowId()+""+register.getUser().getUserid()+""+random.nextInt(100,900));
-				System.out.println(register.toString());
-				bookingJpaRepository.save(register);
-				
-				
-				return "Seats booked Successfully!!!!!!!!";
-			}		
-		}
-		catch(Exception e)
-		{
-			return e.toString();
-		}
-		
+		return bookingService.movieBooking(register);
 		
 	}
 	
@@ -119,17 +93,7 @@ public class MainController {
 	@PostMapping(value = "/cancelTicket")
 	public String cancelTicket(HttpServletRequest req, HttpServletResponse res,@RequestBody Booking book)
 	{
-		try
-		{
-			bookingJpaRepository.cancelTicket(book.getBookingid());
-			bookingJpaRepository.updateBookingStatus(book.getBookingid());
-			
-			return "Cancelled Seat Sucessfully.....";
-		}
-		catch(Exception e)
-		{
-			return e.toString();
-		}
+		return bookingService.cancelBooking(book);
 		
 	}
 	
@@ -138,35 +102,21 @@ public class MainController {
 	@PostMapping(value = "/showFilter")
 	public List<FilterResponse> adminCreateShow(HttpServletRequest req, HttpServletResponse res,@RequestBody ShowFilter filter)
 	{
-		try
-		{
-			return showJpaRepository.findmovies(filter.getShowtype(),filter.getShowdate(),filter.getMovietype(),filter.getScreenid(),filter.getName(),filter.getCity());
-		}
-		catch(Exception e)
-		{
-			return (List<FilterResponse>) e;
-		}
-		
+		return adminMoviesService.movieFilter(filter);
 		
 		
 	}
 	
 	@GetMapping(value = "/allMovies")
 	public List<Movielist> getmovies(HttpServletRequest req, HttpServletResponse res) {
-		try
-		{
-			return movieJpaRepository.findAll();
-		}
-		catch(Exception e)
-		{
-			return (List<Movielist>)e;
-		}
 		
+		return adminMoviesService.allMovies();		
 		
 	}
 
 	@PostMapping(value = "/signUp")
 	public String load(@RequestBody UserModel user) {
+		
 		try {
 			System.out.println(user.getUsername());
 			SimpleDateFormat dnt = new SimpleDateFormat("yy/MM/dd");
@@ -208,12 +158,11 @@ public class MainController {
 		return new JwtResponse(token);
 	}
 	
+	
+	
 	@PostMapping("/payment/{amount}")
 	public ResponseEntity<String> rabbitmq(HttpServletRequest req, HttpServletResponse res, @RequestBody Booking register,@PathVariable int amount)
 	{
-//		bookingJpaRepository.bookseat(register.getShow().getShowId(),register.getSeatno(),register.getBookingid());
-		try
-		{
 			List<Object> price=bookingJpaRepository.getPrice(register.getShow().getShowId(),register.getSeatno());
 			
 			int totalPrice=0;
@@ -221,44 +170,43 @@ public class MainController {
 			{
 				totalPrice+=(Integer)i;
 			}
-			Map<String, Integer> map = new HashMap<>();
-			map.put("totalPrice",totalPrice);
-			map.put("amount", amount);
+			Map<String, String> map = new HashMap<>();
+			map.put("totalPrice",Integer.toString(totalPrice));
+			map.put("amount", Integer.toString(amount));
+			map.put("bookingId", register.getBookingid());
 				
-			ResponseEntity<String> result = restTemplate.postForEntity("http://localhost:9002/paymentStatus", map, String.class);
+			ResponseEntity<String> result = restTemplate.postForEntity("http://localhost:9002/paymentStatusMessage", map, String.class);
 			
-			ResponseEntity<String> payment=restTemplate.getForEntity("http://localhost:9002/isPaymentDone", String.class);
 			
-			if(payment.getBody().equals("success"))
-			{
-				register.setBookingid(register.getBookingid());
-				bookingJpaRepository.bookseat(register.getShow().getShowId(),register.getSeatno(),register.getBookingid());
-				bookingJpaRepository.setPaymentStatus(register.getBookingid());
-				return payment;
-			}
-			else
-			{
-				return payment;
-			}
-		}
-		catch(Exception e)
-		{
-			return null;
-		}
+			
+//			ResponseEntity<String> payment=restTemplate.getForEntity("http://localhost:9002/isPaymentDone", String.class);
+			
+//			if(payment.getBody().equals("success"))
+//			{
+//				register.setBookingid(register.getBookingid());
+//				bookingJpaRepository.bookseat(register.getShow().getShowId(),register.getSeatno(),register.getBookingid());
+//				bookingJpaRepository.setPaymentStatus(register.getBookingid());
+//				return payment;
+//			}
+//			else
+//			{
+//				return payment;
+//			}
+			
+			return result;
+			
+	}
+	
+	@PostMapping("/PaymentSuccess")
+	public String paymentSuccess(HttpServletRequest request,HttpServletResponse response, @RequestBody String bookingId)
+	{
+		Booking register=bookingJpaRepository.findByBookingid(bookingId);
+		register.setBookingid(register.getBookingid());
+		bookingJpaRepository.bookseat(register.getShow().getShowId(),register.getSeatno(),register.getBookingid());
+		bookingJpaRepository.setPaymentStatus(register.getBookingid());
 		
+		return "Payment Successfull";
 		
-		
-//		bookingJpaRepository.bookseat(register.getShow().getShowId(),register.getSeatno(),register.getBookingid());
-
-		
-		
-		
-		
-		
-		
-		
-//
-//		return result;
 	}
 
 }

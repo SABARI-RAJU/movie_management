@@ -23,6 +23,8 @@ import com.springBoot.ticketBooking.model.ScreenSeat;
 import com.springBoot.ticketBooking.model.Shows;
 import com.springBoot.ticketBooking.model.cinemaScreen;
 import com.springBoot.ticketBooking.service.AdminMoviesService;
+import com.springBoot.ticketBooking.service.BookingService;
+import com.springBoot.ticketBooking.service.TheatreService;
 
 @RestController
 @CrossOrigin(origins={"http://localhost:3000"})
@@ -30,6 +32,12 @@ public class AdminController {
 	
 	@Autowired
 	private AdminMoviesService adminMoviesService;
+	
+	@Autowired
+	private BookingService bookingService;
+	
+	@Autowired
+	private TheatreService theatreService;
 	
 	@Autowired
 	private CinemaHallJpaRepository cinemaHallJpaRepository;
@@ -67,8 +75,7 @@ public class AdminController {
 	public String adminHallAdd(HttpServletRequest req, HttpServletResponse res,@RequestBody CinemaHall hall)
 	{
 		hall.setCinemaHallId("#"+hall.getName());
-		cinemaHallJpaRepository.save(hall);
-		return " Added Hall Successfully";
+		return theatreService.addHall(hall);
 		
 		
 		
@@ -77,17 +84,7 @@ public class AdminController {
 	@PostMapping(value = "/addScreen")
 	public String adminTheatreAdd(HttpServletRequest req, HttpServletResponse res,@RequestBody cinemaScreen screen)
 	{
-		try
-		{
-			screen.setScreenid("#"+screen.getScreename()+""+screen.getHall().getCinemaHallId());
-			System.out.println(screen.getHall().getCinemaHallId());
-
-			cinemaScreenJpaRepository.save(screen);
-			return "Added Screen Successfully";
-		}
-		catch (Exception e) {
-			return e.toString();
-		}
+		return theatreService.addScreen(screen);
 		
 		
 	} 
@@ -95,44 +92,15 @@ public class AdminController {
 	@PostMapping(value = "/adminReserve")
 	public String reserveMovie(HttpServletRequest req, HttpServletResponse res,@RequestBody Booking register)
 	{
-		
-		bookingJpaRepository.reserveSeat(register.getShow().getShowId(),register.getSeatno());
-		return "Seat Reserved Successfully";
-		
-		
+		return bookingService.adminReserve(register);
 	}
 
 	
 	@PostMapping(value = "/createShow")
 	public String adminCreateShow(HttpServletRequest req, HttpServletResponse res,@RequestBody Shows show)
 	{
-		System.out.println(show.getScreen().getScreenid().toString());
-		show.setShowId("#"+show.getShowDate()+""+show.getShowType()+""+show.getScreen().getScreenid());
-		ScreenSeat seat=new ScreenSeat();
-		int row=cinemaScreenJpaRepository.findByscreenid(show.getScreen().getScreenid()).getRowdetails();
-		int column=cinemaScreenJpaRepository.findByscreenid(show.getScreen().getScreenid()).getRowdetails();
-		System.out.println(row);
-		char[] alphabet = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
-		for(int i=0;i<row;i++)
-		{
-			for(int j=1;j<=column;j++)
-			{
-				seat.setSeatId(show.getShowId()+""+alphabet[i]+""+j);
-				seat.setSeatNumber(alphabet[i]+""+j);
-				seat.setStatus(false);
-				seat.setReserved(false);
-				seat.setPrice(show.getPrice());
-				seat.setScreenid(show.getScreen().getScreenid());
-				seat.setShowDate(show.getShowDate());
-				seat.setShowid(show.getShowId());
-				seatJpaRepository.save(seat);
-				
-			}
-			
-		}
-		showJpaRepository.save(show);
+		return adminMoviesService.createShow(show);
 		
-		return "Show created Successfully!!";
 	}
 
 }

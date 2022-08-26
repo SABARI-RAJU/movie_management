@@ -52,6 +52,8 @@ public interface BookingJpaRepository extends JpaRepository<Booking,Long> {
 	@Query(value = "UPDATE booking SET payment_status = 1 WHERE bookingid= ?1"
 	,nativeQuery = true)
 	void setPaymentStatus(String bookingid);
+
+	Booking findByBookingid(String bookingid);
 	
 	
 	

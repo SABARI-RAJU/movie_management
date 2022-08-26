@@ -22,5 +22,5 @@ public class TicketBookingApplication {
 	public PasswordEncoder passwordEncoder() {
 		return NoOpPasswordEncoder.getInstance();
 	}
-
+	
 }

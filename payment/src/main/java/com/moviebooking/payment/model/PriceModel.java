@@ -1,24 +1,39 @@
 package com.moviebooking.payment.model;
 
 public class PriceModel {
-	private int totalPrice;
-	private int amount;
-	public int getTotalPrice() {
+	private String totalPrice;
+	private String amount;
+	private String bookingId;
+
+	public String getTotalPrice() {
 		return totalPrice;
 	}
-	public void setTotalPrice(int totalPrice) {
+	public void setTotalPrice(String totalPrice) {
 		this.totalPrice = totalPrice;
 	}
-	public int getAmount() {
+	
+	public String getAmount() {
 		return amount;
 	}
-	public void setAmount(int amount) {
+	
+	public void setAmount(String amount) {
 		this.amount = amount;
 	}
-	public PriceModel(int totalPrice, int amount) {
+
+	public String getBookingId() {
+		return bookingId;
+	}
+
+	public void setBookingId(String bookingId) {
+		this.bookingId = bookingId;
+	}
+
+	
+	public PriceModel(String totalPrice, String amount, String bookingId) {
 		super();
 		this.totalPrice = totalPrice;
 		this.amount = amount;
+		this.bookingId = bookingId;
 	}
 	public PriceModel() {
 		super();
